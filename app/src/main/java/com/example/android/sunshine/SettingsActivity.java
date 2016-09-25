@@ -2,6 +2,7 @@ package com.example.android.sunshine;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -17,6 +18,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
 
     private Preference mPref_Location = null;
     private Preference mPref_Units = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +151,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Pre
                                SettingsActivity.getPrefDefaultUnits(context));
             return TextUtils.equals(context.getString(R.string.pref_units_imperial), units);
         }
+        return false;
+    }
+
+    public static boolean openPreferredLocationInMap(Context context) {
+        String location = getLocation(context);
+        if (location == null || TextUtils.isEmpty(location)) return false;
+        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
+                .appendQueryParameter("q", location)
+                .build();
+        Intent intent = new Intent(Intent.ACTION_VIEW, geoLocation);
+        if (intent.resolveActivity(context.getPackageManager()) != null) context.startActivity(intent);
         return false;
     }
 }
